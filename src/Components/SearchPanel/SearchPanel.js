@@ -1,49 +1,50 @@
 
 import { Accordion } from "react-bootstrap";
 import ExcelReader from "../../ExcelReader/ExcelReader";  
-import { useEffect, useState } from "react";
-import CreateTab from '../Tabs/CreateTab'
+import { useState } from "react";
+import CreateTab from '../Tabs/CreateTab' 
 let requiredData = [];
-function SearchPanel() {
+function SearchPanel(props) {
     const [tableData, setTableData] = useState([]);
     const [fileName, setFileName] = useState();
     const [shareData, setShareData] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState();
     const [updatedChartIndex, setUpdatedChartIndex] = useState(0);
     let updatedData = [...requiredData];
-    const onStatusFiledChange = (values,data) => { 
-        setSelectedStatus(values) 
-        let obj= {
+    const onStatusFiledChange = (values, data) => {
+        setSelectedStatus(values)
+        let obj = {
             name: data.name,
             loadedData: data.loadedData,
             developerGroupData: generateDeveloperGroupData(data.loadedData, false),
             statusLookup: generateStatusLookupData(data.loadedData, false),
-            storyPoint: generateDeveloperStoryPointData(data.loadedData, true,values),
-            chartData: generateChartGroupData(data.loadedData, true,values)
+            storyPoint: generateDeveloperStoryPointData(data.loadedData, true, values),
+            chartData: generateChartGroupData(data.loadedData, true, values)
         };
         let index = requiredData.findIndex(item => item.name === data.name);
-        updatedData[index] = obj; 
+        updatedData[index] = obj;
         setUpdatedChartIndex(index);
         setShareData(updatedData);
         requiredData = updatedData;
-    } 
-    const generateDeveloperGroupData = (parsedData,statusChange) => {
+    }
+    const generateDeveloperGroupData = (parsedData, statusChange) => {
         let obj = {};
-        parsedData.map(item => {
+        parsedData.forEach(item => {
             if (obj[item.Developer]) {
                 obj[item.Developer] += 1;
             }
             else {
                 obj[item.Developer] = 1;
             }
+            
         })
         return obj;
     }
-    const generateDeveloperStoryPointData = (parsedData,statusChange,selectedStatus) => {
+    const generateDeveloperStoryPointData = (parsedData, statusChange, selectedStatus) => {
         let obj = {};
-        parsedData.map(item => { 
+        parsedData.forEach(item => {
             let storyPoint = !item['Story Points'] ? 0 : item['Story Points'];
-            let isDo = statusChange; 
+            let isDo = statusChange;
             if (isDo) {
                 let findItem = selectedStatus.filter(items => items.value === item.Status).length > 0
             
@@ -67,19 +68,19 @@ function SearchPanel() {
         })
         return obj;
     }
-    const generateStatusLookupData = (parsedData,statusChange) => {
+    const generateStatusLookupData = (parsedData, statusChange) => {
         let obj = {};
-        parsedData.map(item => {
+        parsedData.forEach(item => {
             if (!obj[item.Status]) {
                 obj[item.Status] = item.Status;
             }
         });
         return obj;
     }
-    const generateChartGroupData = (parsedData,statusChange,selectedStatus) => {
+    const generateChartGroupData = (parsedData, statusChange, selectedStatus) => {
         let obj = {};
-        parsedData.map(item => { 
-            let isDo = statusChange;  
+        parsedData.forEach(item => {
+            let isDo = statusChange;
             if (isDo) {
                 let findItem = selectedStatus.filter(items => items.value === item.Status).length > 0
             
@@ -105,19 +106,30 @@ function SearchPanel() {
     }
     const exportedData = (data, name) => {
         let parsedData = JSON.parse(data);
+        let index = requiredData.findIndex(item => item.name === name.split('.')[0]); 
+        if (index !== -1) {
+            requiredData.splice(index, 1)
+        }
         requiredData.push({
-            name: name,
+            name: name.split('.')[0],
             loadedData: parsedData,
-            developerGroupData: generateDeveloperGroupData(parsedData,false),
-            statusLookup: generateStatusLookupData(parsedData,false),
-            storyPoint: generateDeveloperStoryPointData(parsedData,false),
-            chartData: generateChartGroupData(parsedData,false)
+            developerGroupData: generateDeveloperGroupData(parsedData, false),
+            statusLookup: generateStatusLookupData(parsedData, false),
+            storyPoint: generateDeveloperStoryPointData(parsedData, false),
+            chartData: generateChartGroupData(parsedData, false)
         })
         setTableData(parsedData);
         console.log(requiredData);
-        setShareData(requiredData);        
+        setShareData(requiredData);
         setFileName(name);
-    } 
+    }
+    const removeTabData = (name) => {
+        let index = requiredData.findIndex(item => item.name.indexOf(name) !== -1);
+        if (index != -1) {
+            requiredData.splice(index, 2);
+        }
+        setShareData(requiredData)
+    }
     return <>
         <Accordion defaultActiveKey="0">
             <Accordion.Item eventKey="0">
@@ -127,9 +139,7 @@ function SearchPanel() {
                 </Accordion.Body>
             </Accordion.Item>
         </Accordion>
-        {tableData.length > 0 && <CreateTab data={shareData} updatedChartIndex={ updatedChartIndex} onStatusFiledChange={ onStatusFiledChange} ></CreateTab>}
-       
-        
+        {tableData.length > 0 && <CreateTab data={shareData} removeTabData={removeTabData} updatedChartIndex={updatedChartIndex} onStatusFiledChange={onStatusFiledChange} ></CreateTab>}
     </>
 }
 export default SearchPanel;

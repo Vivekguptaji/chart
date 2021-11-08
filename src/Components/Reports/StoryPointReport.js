@@ -11,7 +11,7 @@ function StoryPointReport(props) {
       components={{
         Pagination: PatchedPagination,
       }}
-      title=  {'Story Point Report of '+props.fileName  }
+      title=  {'Story Point of '+props.fileName  }
       columns={[ 
         { title: 'Developer', field: 'Developer' }, 
         { title: 'Story Points', field: 'Points' }, 

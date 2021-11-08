@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import XLSX from "xlsx";
 import { make_cols } from '../ExcelReader/MakeColumns'; 
-import { Form,Button,Toast } from "react-bootstrap"; 
+import { Form,Button } from "react-bootstrap"; 
 class ExcelReader extends Component {
   inputField;
   constructor(props) {
