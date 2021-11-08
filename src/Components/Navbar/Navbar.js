@@ -3,7 +3,7 @@ import { Navbar} from 'react-bootstrap'
 function Header() {
     return (<Navbar bg="dark" variant="dark" className="justify-content-center">
         <Navbar.Brand  >
-            Report Generator
+          Dynamic Report
         </Navbar.Brand>
     </Navbar>)
 }

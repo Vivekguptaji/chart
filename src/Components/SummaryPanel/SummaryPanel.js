@@ -17,7 +17,7 @@ function SummaryPanel(props) {
         </Row>
         <Row>
             <Col>Total Row Processed: {data.loadedData.length}</Col>
-            <Col>Total Story Points:{Object.values(data.storyPoint).reduce((a, b) => a + b)}</Col> 
+            <Col>Total Story Points: {Object.values(data.storyPoint).reduce((a, b) => a + b)}</Col> 
         </Row>
         <Row>
             <div>Report Status:</div>

@@ -6,21 +6,22 @@ function BasicExport(props) {
       components={{
         Pagination: PatchedPagination,
       }}
-      title=  {'Report of '+props.fileName  }
+      title={'Report of ' + props.fileName}
       columns={[
         { title: 'Issue Id', field: 'Issue id' },
         { title: 'Developer', field: 'Developer' },
         { title: 'Status', field: 'Status' },
         { title: 'Story Points', field: 'Story Points' },
-        {title:'Issue Type', field:'Issue Type'},
-        {title:'Summary', field:'Summary'}
+        { title: 'Issue Type', field: 'Issue Type' },
+        { title: 'Summary', field: 'Summary' }
       ]}
       data={
         props.data
       }
       options={{
         exportButton: true,
-        exportFileName: 'Basic Report' 
+        exportFileName: 'Basic Report',
+        grouping: true
       }}
     />
   )

@@ -9,18 +9,23 @@ function SearchPanel() {
     const [fileName, setFileName] = useState();
     const [shareData, setShareData] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState();
-    let updatedData = [];
+    const [updatedChartIndex, setUpdatedChartIndex] = useState(0);
+    let updatedData = [...requiredData];
     const onStatusFiledChange = (values,data) => { 
         setSelectedStatus(values) 
-        updatedData.push({
+        let obj= {
             name: data.name,
             loadedData: data.loadedData,
             developerGroupData: generateDeveloperGroupData(data.loadedData, false),
             statusLookup: generateStatusLookupData(data.loadedData, false),
             storyPoint: generateDeveloperStoryPointData(data.loadedData, true,values),
             chartData: generateChartGroupData(data.loadedData, true,values)
-        }); 
+        };
+        let index = requiredData.findIndex(item => item.name === data.name);
+        updatedData[index] = obj; 
+        setUpdatedChartIndex(index);
         setShareData(updatedData);
+        requiredData = updatedData;
     } 
     const generateDeveloperGroupData = (parsedData,statusChange) => {
         let obj = {};
@@ -122,7 +127,7 @@ function SearchPanel() {
                 </Accordion.Body>
             </Accordion.Item>
         </Accordion>
-        {tableData.length > 0 && <CreateTab data={shareData} onStatusFiledChange={ onStatusFiledChange} ></CreateTab>}
+        {tableData.length > 0 && <CreateTab data={shareData} updatedChartIndex={ updatedChartIndex} onStatusFiledChange={ onStatusFiledChange} ></CreateTab>}
        
         
     </>
