@@ -40,12 +40,12 @@ class ExcelReader extends Component {
       const wb = XLSX.read(bstr, {
         type: rABS ? "binary" : "array",
         bookVBA: true,
-      });
+      }); 
       for (let i = 0; i < wb.SheetNames.length; i++) {
         /* Get first worksheet */
         const wsname = wb.SheetNames[i];
         //console.log('count', wb.SheetNames.length, `i + 1 < wb.SheetNames.length`)        
-        this.setState({ showProgressbar: i + 1 < wb.SheetNames.length, progessValue: `Generated ${i} report, please wait...` })
+        this.setState({ showProgressbar: i + 1 < wb.SheetNames.length})
         const ws = wb.Sheets[wsname];
         /* Convert array of arrays */
         const data = XLSX.utils.sheet_to_json(ws);
@@ -82,6 +82,7 @@ class ExcelReader extends Component {
           </Form.Group>}
         <Form.Group className="mb-3" style={{ textAlign: 'center' }} controlId="formBasicPassword">
           <Button disabled={this.state.showProgressbar} variant="dark" onClick={this.handleFile}>Process</Button>{' '}
+          {/* <Button disabled={this.state.showProgressbar} variant="success" onClick={this.handleFile}>Generate Dashboard</Button>{' '} */}
         </Form.Group>
         {this.state.showProgressbar &&
           <Form.Group>

@@ -23,7 +23,7 @@ function SearchPanel(props) {
             developerGroupData: generateDeveloperGroupData(data.loadedData, false),
             statusLookup: generateStatusLookupData(data.loadedData, false),
             storyPoint: generateDeveloperStoryPointData(data.loadedData, true, values),
-            chartData: generateChartGroupData(data.loadedData, true, values)
+            chartData: generateChartGroupData(data.loadedData, true, values), 
         };
         let index = requiredData.findIndex(item => item.name === data.name);
         updatedData[index] = obj;
@@ -31,6 +31,7 @@ function SearchPanel(props) {
         setShareData(updatedData);
         requiredData = updatedData;
     }
+    
     const generateDeveloperGroupData = (parsedData, statusChange) => {
         let obj = {};
         parsedData.forEach(item => {
@@ -98,8 +99,7 @@ function SearchPanel(props) {
                     }
                 }
             }
-            else { 
-                
+            else {
                 if (comingConfig.status[[item.Status]]) {
                     if (obj[item.Status]) {
                         obj[item.Status] += 1;
@@ -115,7 +115,7 @@ function SearchPanel(props) {
     const exportedData = (data, name) => {
         if (name === undefined) {
             return;
-        }
+        } 
         let parsedData = JSON.parse(data); 
         let index = requiredData.findIndex(item => item.name === name.split('.')[0]); 
         if (index !== -1) {
@@ -123,12 +123,12 @@ function SearchPanel(props) {
         }
         let fileNameUploaded = name.split('.')[0];
         requiredData.push({
-            name:fileNameUploaded,
+            name: fileNameUploaded,
             loadedData: parsedData,
             developerGroupData: generateDeveloperGroupData(parsedData, false),
             statusLookup: generateStatusLookupData(parsedData, false),
             storyPoint: generateDeveloperStoryPointData(parsedData, false),
-            chartData: generateChartGroupData(parsedData, false)
+            chartData: generateChartGroupData(parsedData, false), 
         })
         setTableData(parsedData);  
         let fileAdded = uploadedFilesData.findIndex(item => item.value === fileNameUploaded);
