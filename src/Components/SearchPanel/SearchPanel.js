@@ -3,6 +3,7 @@ import { Accordion } from "react-bootstrap";
 import ExcelReader from "../../ExcelReader/ExcelReader";  
 import { useState } from "react";
 import CreateTab from '../Tabs/CreateTab';
+import config from '../../Utility/Config';
 let requiredData = [];
 let uploadedFilesData = [];
 function SearchPanel(props) {
@@ -13,6 +14,7 @@ function SearchPanel(props) {
     const [updatedChartIndex, setUpdatedChartIndex] = useState(0);
     
     let updatedData = [...requiredData];
+    let comingConfig = config;
     const onStatusFiledChange = (values, data) => {
         setSelectedStatus(values)
         let obj = {
@@ -45,7 +47,7 @@ function SearchPanel(props) {
     const generateDeveloperStoryPointData = (parsedData, statusChange, selectedStatus) => {
         let obj = {};
         parsedData.forEach(item => {
-            let storyPoint = !item['Story Points'] ? 0 : item['Story Points'];
+            let storyPoint = !item['Story Points'] ? 0 : item['Story Points']; 
             let isDo = statusChange;
             if (isDo) {
                 let findItem = selectedStatus.filter(items => items.value === item.Status).length > 0
@@ -59,12 +61,14 @@ function SearchPanel(props) {
                     }
                 }
             }
-            else {
-                if (obj[item.Developer]) {
-                    obj[item.Developer] += storyPoint;
-                }
-                else {
-                    obj[item.Developer] = storyPoint;
+            else { 
+                if (comingConfig.status[[item.Status]]) {
+                    if (obj[item.Developer]) {
+                        obj[item.Developer] += storyPoint;
+                    }
+                    else {
+                        obj[item.Developer] = storyPoint;
+                    }
                 }
             }
         })
@@ -84,8 +88,7 @@ function SearchPanel(props) {
         parsedData.forEach(item => {
             let isDo = statusChange;
             if (isDo) {
-                let findItem = selectedStatus.filter(items => items.value === item.Status).length > 0
-            
+                let findItem = selectedStatus.filter(items => items.value === item.Status).length > 0;            
                 if (findItem) {
                     if (obj[item.Status]) {
                         obj[item.Status] += 1;
@@ -95,12 +98,15 @@ function SearchPanel(props) {
                     }
                 }
             }
-            else {
-                if (obj[item.Status]) {
-                    obj[item.Status] += 1;
-                }
-                else {
-                    obj[item.Status] = 1;
+            else { 
+                
+                if (comingConfig.status[[item.Status]]) {
+                    if (obj[item.Status]) {
+                        obj[item.Status] += 1;
+                    }
+                    else {
+                        obj[item.Status] = 1;
+                    }
                 }
             }
         })
@@ -130,6 +136,7 @@ function SearchPanel(props) {
             uploadedFilesData.push({ value: fileNameUploaded, label: fileNameUploaded });
         } 
         setShareData(requiredData);
+        console.log('requiredData',requiredData)
         setFileName(name);
     }
     const removeTabData = (name) => {

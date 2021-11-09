@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import XLSX from "xlsx";
 import { make_cols } from '../ExcelReader/MakeColumns'; 
-import { Form, Button ,ProgressBar} from "react-bootstrap"; 
+import { Form, Button ,ProgressBar, Spinner} from "react-bootstrap"; 
 class ExcelReader extends Component {
   inputField;
   constructor(props) {
@@ -12,7 +12,7 @@ class ExcelReader extends Component {
       cols: [],
       showToast: false,
       showProgressbar: false,
-      progessValue:'Report generation is in progress, please wait...',
+      progessValue: 'Report generation is in progress, please wait...',
     };
     this.handleFile = this.handleFile.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -20,8 +20,8 @@ class ExcelReader extends Component {
 
   handleChange(e) {
     const files = e.target.files;
-    this.inputField = e.target; 
-    if (files && files[0]) this.setState({ file: files[0], showToast: false }); 
+    this.inputField = e.target;
+    if (files && files[0]) this.setState({ file: files[0], showToast: false });
   }
 
   handleFile() {
@@ -43,10 +43,9 @@ class ExcelReader extends Component {
       });
       for (let i = 0; i < wb.SheetNames.length; i++) {
         /* Get first worksheet */
-        const wsname = wb.SheetNames[i];  
-        console.log('count', wb.SheetNames.length, `i + 1 < wb.SheetNames.length`)
-        
-        this.setState({ showProgressbar: i +1 < wb.SheetNames.length, progessValue :`Generated ${i} report, please wait...`  })
+        const wsname = wb.SheetNames[i];
+        //console.log('count', wb.SheetNames.length, `i + 1 < wb.SheetNames.length`)        
+        this.setState({ showProgressbar: i + 1 < wb.SheetNames.length, progessValue: `Generated ${i} report, please wait...` })
         const ws = wb.Sheets[wsname];
         /* Convert array of arrays */
         const data = XLSX.utils.sheet_to_json(ws);
@@ -84,10 +83,12 @@ class ExcelReader extends Component {
         <Form.Group className="mb-3" style={{ textAlign: 'center' }} controlId="formBasicPassword">
           <Button disabled={this.state.showProgressbar} variant="dark" onClick={this.handleFile}>Process</Button>{' '}
         </Form.Group>
-        {this.state.showProgressbar && <Form.Label>{ this.state.progessValue}</Form.Label>}
+        {this.state.showProgressbar &&
+          <Form.Group>
+            <Form.Label>{this.state.progessValue}</Form.Label> <Spinner animation="grow"></Spinner>
+          </Form.Group>}
       </Form>)
   }
-  
 }
 
 export default ExcelReader;

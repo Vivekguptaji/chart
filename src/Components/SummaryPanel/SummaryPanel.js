@@ -1,14 +1,18 @@
 import { Container, Row, Col } from "react-bootstrap"; 
-import Select from 'react-select'
+import Select from 'react-select';
+import config from '../../Utility/Config';
 function SummaryPanel(props) {
     let data = props.data;
+    let multiSelectArray = [];  
+    let defaultValues = [];
     const handleChange = (value) => {
         props.onStatusFiledChange(value, props.data)
-    }
- 
-    let multiSelectArray = [];
+    } 
     for (const key in data.statusLookup) {
-        multiSelectArray.push({ value: key, label: key })
+        multiSelectArray.push({ value: key, label: key }); 
+        if (config.status[key]) {
+            defaultValues.push({ value: key, label: key });  
+        }
     } 
     let storyPoints = Object.keys(data.storyPoint).length >0 ? Object.values(data.storyPoint).reduce((a, b) => a + b) : 0;
     return <Container className="summaryContainer">
@@ -26,7 +30,7 @@ function SummaryPanel(props) {
                 onChange={handleChange}
                 isMulti={true}
                 closeMenuOnSelect={true}
-                defaultValue={multiSelectArray}
+                defaultValue={defaultValues}
             />
         </Row>
     </Container>
