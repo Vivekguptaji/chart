@@ -2,14 +2,16 @@
 import { Accordion } from "react-bootstrap";
 import ExcelReader from "../../ExcelReader/ExcelReader";  
 import { useState } from "react";
-import CreateTab from '../Tabs/CreateTab' 
+import CreateTab from '../Tabs/CreateTab';
 let requiredData = [];
+let uploadedFilesData = [];
 function SearchPanel(props) {
     const [tableData, setTableData] = useState([]);
     const [fileName, setFileName] = useState();
     const [shareData, setShareData] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState();
     const [updatedChartIndex, setUpdatedChartIndex] = useState(0);
+    
     let updatedData = [...requiredData];
     const onStatusFiledChange = (values, data) => {
         setSelectedStatus(values)
@@ -105,37 +107,46 @@ function SearchPanel(props) {
         return obj;
     }
     const exportedData = (data, name) => {
-        let parsedData = JSON.parse(data);
+        if (name === undefined) {
+            return;
+        }
+        let parsedData = JSON.parse(data); 
         let index = requiredData.findIndex(item => item.name === name.split('.')[0]); 
         if (index !== -1) {
             requiredData.splice(index, 1)
         }
+        let fileNameUploaded = name.split('.')[0];
         requiredData.push({
-            name: name.split('.')[0],
+            name:fileNameUploaded,
             loadedData: parsedData,
             developerGroupData: generateDeveloperGroupData(parsedData, false),
             statusLookup: generateStatusLookupData(parsedData, false),
             storyPoint: generateDeveloperStoryPointData(parsedData, false),
             chartData: generateChartGroupData(parsedData, false)
         })
-        setTableData(parsedData);
-        console.log(requiredData);
+        setTableData(parsedData);  
+        let fileAdded = uploadedFilesData.findIndex(item => item.value === fileNameUploaded);
+        if (fileAdded === -1) {
+            uploadedFilesData.push({ value: fileNameUploaded, label: fileNameUploaded });
+        } 
         setShareData(requiredData);
         setFileName(name);
     }
     const removeTabData = (name) => {
-        let index = requiredData.findIndex(item => item.name.indexOf(name) !== -1);
-        if (index != -1) {
+        let index = requiredData.findIndex(item => item.name.indexOf(name) !== -1); 
+        if (index !== -1) {
             requiredData.splice(index, 2);
         }
         setShareData(requiredData)
     }
+    
     return <>
         <Accordion defaultActiveKey="0">
             <Accordion.Item eventKey="0">
                 <Accordion.Header>Upload CSV File</Accordion.Header>
                 <Accordion.Body>
-                    <ExcelReader exportedData={exportedData}></ExcelReader>
+                    <ExcelReader options={uploadedFilesData} exportedData={exportedData} onClick={removeTabData }></ExcelReader>
+                    { }
                 </Accordion.Body>
             </Accordion.Item>
         </Accordion>

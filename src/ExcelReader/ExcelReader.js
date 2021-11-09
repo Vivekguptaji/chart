@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import XLSX from "xlsx";
 import { make_cols } from '../ExcelReader/MakeColumns'; 
-import { Form,Button } from "react-bootstrap"; 
+import { Form, Button ,ProgressBar} from "react-bootstrap"; 
 class ExcelReader extends Component {
   inputField;
   constructor(props) {
@@ -10,7 +10,9 @@ class ExcelReader extends Component {
       file: {},
       data: [],
       cols: [],
-      showToast: false
+      showToast: false,
+      showProgressbar: false,
+      progessValue:'Report generation is in progress, please wait...',
     };
     this.handleFile = this.handleFile.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -18,17 +20,17 @@ class ExcelReader extends Component {
 
   handleChange(e) {
     const files = e.target.files;
-    this.inputField = e.target;
-    if (files && files[0]) this.setState({ file: files[0], showToast: false });
-    
+    this.inputField = e.target; 
+    if (files && files[0]) this.setState({ file: files[0], showToast: false }); 
   }
 
   handleFile() {
-    /* Boilerplate to set up FileReader */ 
+    /* Boilerplate to set up FileReader */
     if (!this.state.file['name']) {
       this.setState({ showToast: true });
       return
     }
+    this.setState({ showProgressbar: true });
     const reader = new FileReader();
     const rABS = !!reader.readAsBinaryString;
 
@@ -39,19 +41,26 @@ class ExcelReader extends Component {
         type: rABS ? "binary" : "array",
         bookVBA: true,
       });
-      /* Get first worksheet */
-      const wsname = wb.SheetNames[0];
-      const ws = wb.Sheets[wsname];
-      /* Convert array of arrays */
-      const data = XLSX.utils.sheet_to_json(ws);
-      /* Update state */
-      this.setState({ data: data, cols: make_cols(ws["!ref"]) }, () => {
-        let data = JSON.stringify(this.state.data, null, 2); 
-        this.props.exportedData(data, this.state.file.name)
-        console.log();
-        this.inputField.value = null;
-        this.setState({ file: {} })
-      });
+      for (let i = 0; i < wb.SheetNames.length; i++) {
+        /* Get first worksheet */
+        const wsname = wb.SheetNames[i];  
+        console.log('count', wb.SheetNames.length, `i + 1 < wb.SheetNames.length`)
+        
+        this.setState({ showProgressbar: i +1 < wb.SheetNames.length, progessValue :`Generated ${i} report, please wait...`  })
+        const ws = wb.Sheets[wsname];
+        /* Convert array of arrays */
+        const data = XLSX.utils.sheet_to_json(ws);
+        /* Update state */
+        this.setState({ data: data, cols: make_cols(ws["!ref"]) }, () => {
+          let data = JSON.stringify(this.state.data, null, 2);
+          this.props.exportedData(data, wsname)
+          console.log();
+          this.inputField.value = null;
+          this.setState({ file: {} })
+         
+        });
+      }
+      
     };
     if (rABS) {
       reader.readAsBinaryString(this.state.file);
@@ -61,7 +70,6 @@ class ExcelReader extends Component {
   }
 
   render() {
-   
     return (
       <Form>
         <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -73,12 +81,15 @@ class ExcelReader extends Component {
           <Form.Group className="errorMsg">
             <Form.Label>Please select the file to process the report</Form.Label>
           </Form.Group>}
-        <Form.Group className="mb-3" style={{textAlign:'center'}} controlId="formBasicPassword">
-          <Button variant="dark" onClick={this.handleFile}>Process</Button>{' '}
+        <Form.Group className="mb-3" style={{ textAlign: 'center' }} controlId="formBasicPassword">
+          <Button disabled={this.state.showProgressbar} variant="dark" onClick={this.handleFile}>Process</Button>{' '}
         </Form.Group>
+        {this.state.showProgressbar && <Form.Label>{ this.state.progessValue}</Form.Label>}
       </Form>)
   }
   
 }
 
 export default ExcelReader;
+{/* <Select options={this.props.options} isMulti="true" defaultValue={this.props.options}
+            onChange={this.props.onClick} isClearable={false}></Select> */}
