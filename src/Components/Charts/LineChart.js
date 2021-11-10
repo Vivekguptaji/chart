@@ -2,24 +2,25 @@
 import ReactApexChart from "react-apexcharts";
 let sprintName = [];
 function LineChart(props) {
-    const chartName = props.chartName;  
+    const chartName = props.chartName;
+    let chartData = props.data;
     let series = [{
         name: 'IBM Delivered StoryPoint',
         type: 'column',
-        data: [83, 11, 22, 27, 13, 22, 37, 41]
+        data: chartData.storyPoints
     }, {
         name: 'IBM Resolved Defects',
         type: 'column',
-        data: [44, 55, 41, 67, 22, 43, 21, 31]
+        data:  chartData.defectsPoints
     }, {
         name: 'AVG SP',
         type: 'line',
-        data: [30, 25, 36, 30, 45, 35, 64, 52]
+        data: [3, 15, 6, 8, 5]
         },
         {
             name: 'Linear (IBM Delivered StoryPoint)',
             type: 'line',
-            data: [23, 11, 22, 27, 13, 22, 37, 21]
+            data: [3, 11, 9, 7, 10]
         }];
     let options = {
         chart: {
@@ -55,7 +56,7 @@ function LineChart(props) {
         // labels: ['21.16 (Aug)', '21.17 (Aug)', '21.18 (Aug)', '21.19 (Aug)',
         // '21.20 (Aug)', '21.21 (Aug)', '21.22 (Aug)', '21.23 (Aug)', 
         // ],
-         labels:props.data.series,
+         labels:chartData.series,
         markers: {
             size: 0
         },
