@@ -13,10 +13,8 @@ function CreateTab(props) {
     let comingData = props.data;
     let chartData = props.data[props.updatedChartIndex]['chartData'];
     let storyPoint = props.data[props.updatedChartIndex]['storyPoint'];
-    const clearTab = (name) => {
-        props.removeTabData(name);
-    }
-    useEffect(() => {
+   
+    useEffect(() => { 
         let generatedTabs = comingData.map(item => {
             return <Tab eventKey={item['name']} key={item['name']} title={<span>{item['name']} </span>}>
                 <Row>

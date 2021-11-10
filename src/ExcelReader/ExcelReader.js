@@ -23,7 +23,11 @@ class ExcelReader extends Component {
     this.inputField = e.target;
     if (files && files[0]) this.setState({ file: files[0], showToast: false });
   }
-
+  callParentfunction(obj) { 
+    obj.forEach(item => {
+      this.props.exportedData(item.data, item.name)
+    }) 
+   }
   handleFile() {
     /* Boilerplate to set up FileReader */
     if (!this.state.file['name']) {
@@ -33,7 +37,7 @@ class ExcelReader extends Component {
     this.setState({ showProgressbar: true });
     const reader = new FileReader();
     const rABS = !!reader.readAsBinaryString;
-
+    let uploadedData = [];
     reader.onload = (e) => {
       /* Parse data */
       const bstr = e.target.result;
@@ -52,12 +56,14 @@ class ExcelReader extends Component {
         /* Update state */
         this.setState({ data: data, cols: make_cols(ws["!ref"]) }, () => {
           let data = JSON.stringify(this.state.data, null, 2);
-          this.props.exportedData(data, wsname)
-          console.log();
+          uploadedData.push({ data: data, name: wsname });  
           this.inputField.value = null;
           this.setState({ file: {} })
          
         });
+        if (i + 1 === wb.SheetNames.length) {
+          this.callParentfunction(uploadedData)
+        }
       }
       
     };

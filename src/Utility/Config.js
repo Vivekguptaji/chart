@@ -10,8 +10,15 @@ const entityType = {
     Fullstack: 'Fullstack',
     UI:'Frontend'
 }
+const issueType = {
+    Defect: 'Defect',
+    'PROD Defect':'PROD Defect'
+}
+const sprintName = 'Sprint Name'
  
 export default {
     status: statusConfig,
-    entityType: entityType
+    entityType: entityType,
+    issueType: issueType,
+    sprintName:sprintName
 }
